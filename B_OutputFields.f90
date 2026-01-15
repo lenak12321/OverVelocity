@@ -3,7 +3,7 @@ Subroutine B_OutputFields(IO,NI,NJ,X,Y,P,U,V,T,Ro,M)
   Real,Dimension(NI,NJ):: X, Y
   Real,Dimension(0:NI,0:NJ):: P, U, V, T, Ro, M
 
-Write(IO,*) 'VARIABLES = "X","Y","U","V","T","Ro","M","P"'
+  Write(IO,*) 'VARIABLES = "X","Y","U","V","T","Ro","M","P"'
   Write(IO,*) 'ZONE I=',NI,', J=',NJ, 'DATAPACKING=BLOCK, VARLOCATION=([3-30]=CELLCENTERED)'
   Write(IO,'(100F20.8)') X(1:NI,1:NJ)
   Write(IO,'(100F20.8)') Y(1:NI,1:NJ)
@@ -19,4 +19,5 @@ Write(IO,*) 'VARIABLES = "X","Y","U","V","T","Ro","M","P"'
   WRITE(*,*) 'OutputFields: Max M = ', MAXVAL(M(1:NI-1,1:NJ-1))
   WRITE(*,*) 'OutputFields: Min M = ', MINVAL(M(1:NI-1,1:NJ-1))
   
+
 End Subroutine B_OutputFields
