@@ -15,9 +15,7 @@ real, dimension(0:NI,0:NJ) :: ro, roU, roV, roE
 real, dimension(0:NI,0:NJ) :: ro1, roU1, roV1, roE1
 real, dimension(0:NI,0:NJ) :: RES1, RES2, RES3, RES4
 
-! Массивы для реконструированных значений (только для 2-го порядка)
 real, dimension(0:NI,0:NJ) :: pL, pR, uL, uR, vL, vR, TL, TR
-
 real, dimension(4) :: qR_face, qL_face
 real, dimension(2) :: SF
 real, dimension(4) :: FLUX
@@ -26,7 +24,6 @@ real :: a_local, U_conv
 
 real :: CellVolume(NI-1,NJ-1), IFaceVector(NI,NJ-1,2), JFaceVector(NI-1,NJ,2)
 
-! Объявление функций
 real :: TVD_LIMITER
 
 do I = 1, NI-1
@@ -49,7 +46,7 @@ do k = 1, Nit
 	RES4(:,:) = 0.0
 
     ! ==================================================================
-    ! TVD-реконструкция примитивных переменных
+    ! TVD-реконструкция
     ! ==================================================================
     if (order == 2) then
         call B_TVD(NI, NJ, P, U, V, T, &
@@ -244,10 +241,6 @@ do k = 1, Nit
 
 			dt = cfl*sqrt(CellVolume(I,J))/sqrt(gamma*Rm*Tin)
 
-			!a_local = sqrt(gamma * Rm * T(I,J))
-			!U_conv = sqrt(U(I,J)**2 + V(I,J)**2) + a_local
-			!dt = cfl * CellVolume(I,J) / U_conv
-
             ro1(I,J) = ro(I,J) - dt * RES1(I,J) / CellVolume(I,J)
             roU1(I,J) = roU(I,J) - dt * RES2(I,J) / CellVolume(I,J)
             roV1(I,J) = roV(I,J) - dt * RES3(I,J) / CellVolume(I,J)
@@ -280,7 +273,7 @@ do k = 1, Nit
 if ((k==1).or.(k==10).or.(k==20).or.(k==30).or.(k==40).or.(k==50).or.&
 	(k==(Nit/5)).or.(k==(Nit/5*2)).or.(k==(Nit/5*3)).or.(k==(Nit/5*4)).or.(k==Nit)) then
 write (*,*)		k, maxval(Res1(1:NI-1,1:NJ-1)), maxval(Res2(1:NI-1,1:NJ-1)), &
-				maxval(Res3(1:NI-1,1:NJ-1)), maxval(Res4(1:NI-1,1:NJ-1))                    !, point_U(i,j)
+				maxval(Res3(1:NI-1,1:NJ-1)), maxval(Res4(1:NI-1,1:NJ-1))             
 endif
 
 write (12,*)	k, maxval(Res1(1:NI-1,1:NJ-1)), maxval(Res2(1:NI-1,1:NJ-1)), &
@@ -427,5 +420,6 @@ case(4)  ! van Albada
 case default
     TVD_LIMITER = 1.0  ! Без ограничителя (чисто второй порядок)
 end select
+
 
 end function TVD_LIMITER
